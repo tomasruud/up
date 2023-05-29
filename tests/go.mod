@@ -2,7 +2,12 @@ module test
 
 go 1.20
 
-require modernc.org/sqlite v1.22.1
+replace github.com/tomasruud/up => ../
+
+require (
+	github.com/tomasruud/up v0.0.0-00010101000000-000000000000
+	modernc.org/sqlite v1.22.1
+)
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
