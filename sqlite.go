@@ -7,7 +7,7 @@ import (
 )
 
 // SQLiteStore is a StateStore implementation for SQLite.
-// This is just a basic example, you are free to implement your own custom logic with whatever fields and logic you might need.
+// This is just an example, you are free to implement your own custom logic with whatever fields and logic you might need.
 type SQLiteStore struct {
 	// Table is the name of the table to use for storing the current migration index, defaults to "migrations" if nothing is set.
 	Table string
