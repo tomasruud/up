@@ -66,7 +66,7 @@ func (m Migrator) migrateTx(tx *sql.Tx) error {
 		start = *last + 1
 	}
 
-	if start >= len(m.Migrations) {
+	if start > len(m.Migrations) {
 		return fmt.Errorf("last migration index (%d) is out of bounds (<%d)", start, len(m.Migrations))
 	}
 

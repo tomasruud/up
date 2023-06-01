@@ -137,4 +137,49 @@ func TestMigrator(t *testing.T) {
 		}
 	})
 
+	t.Run("it can run migrate again after first run", func(t *testing.T) {
+		db := newDB(t)
+
+		migrator := up.Migrator{
+			StateStore: up.SQLiteStore{},
+			Migrations: []up.Migration{
+				func(tx *sql.Tx) error {
+					_, err := tx.Exec(`create table users(id text primary key)`)
+					return err
+				},
+
+				func(tx *sql.Tx) error {
+					_, err := tx.Exec(`alter table users add column name text`)
+					return err
+				},
+			},
+		}
+
+		if err := migrator.Migrate(db); err != nil {
+			t.Fatalf("unable to migrate: %v", err)
+		}
+
+		if err := migrator.Migrate(db); err != nil {
+			t.Fatalf("unable to migrate: %v", err)
+		}
+
+		migrator.Migrations = append(migrator.Migrations, func(tx *sql.Tx) error {
+			_, err := tx.Exec(`insert into users(id, name) values('1', 'tomas')`)
+			return err
+		})
+
+		if err := migrator.Migrate(db); err != nil {
+			t.Fatalf("unable to migrate: %v", err)
+		}
+
+		var got int
+		if err := db.QueryRow("select max(id) from migrations").Scan(&got); err != nil {
+			t.Fatalf("unable to query migrations: %v", err)
+		}
+
+		want := 2
+		if got != want {
+			t.Errorf("got %d, want %d", got, want)
+		}
+	})
 }
